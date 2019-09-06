@@ -1,0 +1,17 @@
+{
+  "name": "Refined Linear",
+  "version": "0.0.0",
+  "description": "Simplifies the Linear interface and adds useful features",
+  "homepage_url": "https://github.com/scotttrinh/refined-linear",
+  "manifest_version": 2,
+  "minimum_chrome_version": "68",
+  "permissions": ["https://linear.app/*"],
+  "content_scripts": [
+    {
+      "run_at": "document_start",
+      "matches": ["https://linear.app/*"],
+      "css": ["content.css"],
+      "js": ["content.js"]
+    }
+  ]
+}
