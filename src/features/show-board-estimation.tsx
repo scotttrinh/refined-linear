@@ -1,14 +1,14 @@
 import React from "dom-chef";
 import { constant, constTrue, constFalse } from "fp-ts/lib/function";
-import * as Option from 'fp-ts/lib/Option';
-import { pipe } from 'fp-ts/lib/pipeable';
+import * as Option from "fp-ts/lib/Option";
+import { pipe } from "fp-ts/lib/pipeable";
 import { FeatureDetails } from "../features";
 
 const Effort = () => (
   <div className="sc-bdVaJa sc-fHSTwm kTUyxO">
     <div className="sc-ebFjAB hQQhjm sc-esjQYD jyJHGQ sc-dqBHgY fJUoRH">
       <svg
-        className="sc-jKVCRD bSRhFK"
+        className="sc-cqCuEk WmdWr sc-eHgmQL kgNMBB"
         width="14"
         height="14"
         viewBox="0 0 14 14"
@@ -29,26 +29,17 @@ const Effort = () => (
   </div>
 );
 
-const updateIssue = (...args: any[]) => {
-  console.log(args);
-};
-
-const observer = new MutationObserver(updateIssue);
-
 const init = async () => {
-  console.log("show-board-estimation");
-  const boardEl = document.querySelector(".sc-hlILIN.hZbfKV");
-  if (boardEl) {
-    observer.observe(boardEl, { childList: true, subtree: true });
-    const issueEls = Array.from(
-      boardEl.querySelectorAll('a[data-react-beautiful-dnd-draggable="0"]')
+  const issueEls = Array.from(
+    document.querySelectorAll('a[data-react-beautiful-dnd-draggable="0"]')
+  );
+  for (const issueEl of issueEls) {
+    pipe(
+      Option.fromNullable(issueEl.childNodes[1]),
+      Option.chain((children) => Option.fromNullable(children.childNodes[1])),
+      Option.chain((children) => Option.fromNullable(children.childNodes[0])),
+      Option.map(el => el.after((Effort() as unknown as Element)))
     );
-    for (const issueEl of issueEls) {
-      pipe(
-        Option.fromNullable(issueEl.querySelector(".sc-hdPSEv")),
-        Option.map((el) => el.after(Effort() as unknown as Element))
-      );
-    }
   }
 };
 const deinit = constant(Promise.resolve());

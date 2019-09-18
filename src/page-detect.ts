@@ -1,20 +1,15 @@
-import userSettings from "./user-settings";
-import { getActiveCycleNumber } from "./utils";
+import { Lazy } from 'fp-ts/lib/function';
+import { queryByText } from "@testing-library/dom";
 
-export const isIssueBoard = () => /\/board/.test(window.location.pathname);
+import * as selectors from "./selectors";
 
-export const isCycle = () => /\/cycle/.test(window.location.pathname);
+export const isIssueBoard: Lazy<Boolean> = () => /\/board/.test(window.location.pathname);
 
-export const isActiveCycle = () => {
-  if (!isCycle()) {
-    return false;
-  }
+export const isCycle: Lazy<Boolean> = () => /\/cycle/.test(window.location.pathname);
 
-  const cycleNumber = window.location.pathname.match(/\/cycle\/(\d+)/)![1];
+export const isActiveCycle: Lazy<Boolean> = () =>
+  isCycle() && Boolean(queryByText(document.body, /Active Cycle \d+/));
 
-  return cycleNumber === getActiveCycleNumber();
-};
-
-export const isBoard = () =>
+export const isBoard: Lazy<Boolean> = () =>
   isIssueBoard() ||
-  (isActiveCycle && Boolean(userSettings.get("showCyclePageBoard")));
+  Boolean(isActiveCycle && document.querySelector(selectors.CARD));
