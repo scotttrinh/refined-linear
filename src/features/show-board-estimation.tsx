@@ -1,14 +1,42 @@
 import React from "dom-chef";
+import { css } from "emotion";
 import { constant, constTrue, constFalse } from "fp-ts/lib/function";
 import * as Option from "fp-ts/lib/Option";
 import { pipe } from "fp-ts/lib/pipeable";
 import { FeatureDetails } from "../features";
 
 const Effort = () => (
-  <div className="sc-bdVaJa sc-fHSTwm kTUyxO">
-    <div className="sc-ebFjAB hQQhjm sc-esjQYD jyJHGQ sc-dqBHgY fJUoRH">
+  <div
+    className={css`
+      display: flex;
+      flex-grow: initial;
+      flex-basis: initial;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      height: 22px;
+      padding: 4px;
+      border-radius: 4px;
+      border: 1px solid rgb(48, 47, 55);
+    `}
+  >
+    <div
+      className={css`
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        margin-right: 8px;
+      `}
+    >
       <svg
-        className="sc-cqCuEk WmdWr sc-eHgmQL kgNMBB"
+        className={css`
+          width: 14px;
+          height: 14px;
+          margin-right: 6px;
+          flex-shrink: 0;
+          fill: rgb(150, 155, 160);
+        `}
         width="14"
         height="14"
         viewBox="0 0 14 14"
@@ -24,23 +52,37 @@ const Effort = () => (
           fill="#BEC2C8"
         ></path>
       </svg>
-      <span className="sc-bwzfXH sMVgl">2</span>
+      <span
+        className={css`
+          font-style: normal;
+          line-height: normal;
+          font-weight: normal;
+          color: rgb(150, 155, 160);
+          font-size: 12px;
+        `}
+      >
+        2
+      </span>
     </div>
   </div>
 );
+
+const attachEffort = (issueEls: Element[]) => {
+  issueEls.forEach((issueEl: Element) => {
+    pipe(
+      Option.fromNullable(issueEl.childNodes[1]),
+      Option.chain(children => Option.fromNullable(children.childNodes[1])),
+      Option.chain(children => Option.fromNullable(children.childNodes[0])),
+      Option.map(el => el.after((Effort() as unknown) as Element))
+    );
+  });
+};
 
 const init = async () => {
   const issueEls = Array.from(
     document.querySelectorAll('a[data-react-beautiful-dnd-draggable="0"]')
   );
-  for (const issueEl of issueEls) {
-    pipe(
-      Option.fromNullable(issueEl.childNodes[1]),
-      Option.chain((children) => Option.fromNullable(children.childNodes[1])),
-      Option.chain((children) => Option.fromNullable(children.childNodes[0])),
-      Option.map(el => el.after((Effort() as unknown as Element)))
-    );
-  }
+  attachEffort(issueEls);
 };
 const deinit = constant(Promise.resolve());
 const include = [constTrue];

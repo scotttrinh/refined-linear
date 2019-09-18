@@ -42,7 +42,10 @@
     "webpack-cli": "^3.3.8"
   },
   "dependencies": {
+    "@testing-library/dom": "^6.2.0",
     "dom-chef": "^3.6.2",
+    "dom-loaded": "^2.0.0",
+    "emotion": "^10.0.17",
     "fp-ts": "^2.0.5",
     "lodash": "^4.17.15"
   }
