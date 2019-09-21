@@ -32,7 +32,7 @@ const Effort = (props: EffortProps) => (
       <span className="rl__effort__number">{props.estimate}</span>
     </div>
   </div>
-);
+) as unknown as HTMLDivElement;
 
 const attachEffort = (issueEls: Element[]) => {
   issueEls.forEach((issueEl: Element) => {
@@ -42,7 +42,7 @@ const attachEffort = (issueEls: Element[]) => {
       Option.chain(children => Option.fromNullable(children.childNodes[0])),
       Option.map(el => {
         const effort = Effort({ estimate: 2 });
-        el.after((effort as unknown) as Element);
+        el.after(effort);
       })
     );
   });
