@@ -6,31 +6,30 @@ import { pipe } from "fp-ts/lib/pipeable";
 import * as when from "../when";
 import { FeatureDetails } from "../features";
 import * as selectors from "../selectors";
-import './show-board-estimation.css';
+import "./show-board-estimation.css";
 
-const Effort = () => (
-  <div className='rl__effort__container'>
-    <div className='rl__effort__outline'>
+interface EffortProps {
+  estimate: number;
+}
+
+const Effort = (props: EffortProps) => (
+  <div className="rl__effort__container">
+    <div className="rl__effort__outline">
       <svg
-        className='rl__effort__icon'
+        className="rl__effort__icon"
         width="14"
         height="14"
         viewBox="0 0 14 14"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
+        <circle cx="7" cy="7" r="6.5" stroke="#BEC2C8" fill="none" />
         <path
-          d="M7 0C3.13401 1.68988e-07 0 3.13401 0 7C1.68988e-07 10.866 3.13401 14 7 14C10.866 14 14 10.866 14 7C13.9956 3.13587 10.8641 0.00455 7 0ZM7 12.8333C3.77834 12.8333 1.16667 10.2217 1.16667 7C1.16667 3.77834 3.77834 1.16667 7 1.16667C10.2217 1.16667 12.8333 3.77834 12.8333 7C12.8298 10.2202 10.2202 12.8298 7 12.8333Z"
+          d="M10 9.2L7.3 6.7v-3a.6.6 0 10-1.2 0V7c0 .2 0 .3.2.4l3 2.7a.6.6 0 00.7 0 .6.6 0 000-.9z"
           fill="#BEC2C8"
-        ></path>
-        <path
-          d="M9.99483 9.22252L7.29167 6.74394V3.79169C7.29167 3.46952 7.0305 3.20835 6.70833 3.20835C6.38617 3.20835 6.125 3.46952 6.125 3.79169V7.00002C6.12482 7.16368 6.1934 7.31989 6.314 7.43052L9.20675 10.0818C9.44534 10.2964 9.81179 10.2805 10.031 10.0462C10.2483 9.80868 10.2321 9.44007 9.99483 9.22252Z"
-          fill="#BEC2C8"
-        ></path>
+        />
       </svg>
-      <span className='rl__effort__number'>
-        2
-      </span>
+      <span className="rl__effort__number">{props.estimate}</span>
     </div>
   </div>
 );
@@ -42,8 +41,8 @@ const attachEffort = (issueEls: Element[]) => {
       Option.chain(children => Option.fromNullable(children.childNodes[1])),
       Option.chain(children => Option.fromNullable(children.childNodes[0])),
       Option.map(el => {
-        const effort = Effort();
-        el.after((effort as unknown) as Element)
+        const effort = Effort({ estimate: 2 });
+        el.after((effort as unknown) as Element);
       })
     );
   });
@@ -51,9 +50,7 @@ const attachEffort = (issueEls: Element[]) => {
 
 const doShowBoardEstimation = async () => {
   console.log("doShowBoardEstimation");
-  const issueEls = Array.from(
-    document.querySelectorAll(selectors.CARD)
-  );
+  const issueEls = Array.from(document.querySelectorAll(selectors.CARD));
   attachEffort(issueEls);
 };
 const undo = constant(Promise.resolve());
@@ -61,7 +58,7 @@ const include = [constTrue];
 const exclude = [constFalse];
 
 const showBoardEstimation: FeatureDetails = {
-  id: 'show-board-estimation',
+  id: "show-board-estimation",
   when: when.locationChanges,
   do: doShowBoardEstimation,
   undo,
