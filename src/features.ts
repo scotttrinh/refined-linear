@@ -3,19 +3,25 @@ import { Lazy } from "fp-ts/lib/function";
 import { TaskEither, taskEither, tryCatch } from "fp-ts/lib/TaskEither";
 
 export interface FeatureDetails {
-  init: Lazy<Promise<void>>;
-  deinit: Lazy<Promise<void>>;
+  id: string;
+  when: (callback: Lazy<Promise<void>>) => void;
+  do: Lazy<Promise<void>>;
+  undo: Lazy<Promise<void>>;
   include: Lazy<Boolean>[];
   exclude: Lazy<Boolean>[];
 }
 
+const run = (definition: FeatureDetails): Promise<void> => {
+  const everyIncludeFalse = definition.include.every(c => !c());
+  const everyExcludeTrue = definition.exclude.some(c => c());
+  const shouldSkip = everyIncludeFalse || everyExcludeTrue;
+  return shouldSkip ? definition.undo() : definition.do();
+};
+
 export const add = (definition: FeatureDetails): TaskEither<Error, void> => {
   return tryCatch<Error, void>(
-    () => {
-      const everyIncludeFalse = definition.include.every(c => !c());
-      const everyExcludeTrue = definition.exclude.some(c => c());
-      const shouldSkip = everyIncludeFalse || everyExcludeTrue;
-      return shouldSkip ? definition.deinit() : definition.init();
+    async () => {
+      definition.when(() => run(definition));
     },
     (reason: unknown) => new Error(String(reason))
   );

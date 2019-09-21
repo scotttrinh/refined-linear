@@ -45,6 +45,7 @@
     "@testing-library/dom": "^6.2.0",
     "dom-chef": "^3.6.2",
     "dom-loaded": "^2.0.0",
+    "element-ready": "^4.1.1",
     "emotion": "^10.0.17",
     "fp-ts": "^2.0.5",
     "lodash": "^4.17.15"

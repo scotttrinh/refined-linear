@@ -1,0 +1,10 @@
+.rl__issue-title__container {
+    height: initial;
+    min-height: 80px;
+    padding: 16px;
+}
+
+.rl__issue-title__title {
+    white-space: initial;
+    overflow: visible;
+}

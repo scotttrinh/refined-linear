@@ -1,0 +1,36 @@
+.rl__effort__container {
+  display: flex;
+  flex-grow: initial;
+  flex-basis: initial;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 22px;
+  padding: 4px;
+  border-radius: 4px;
+  border: 1px solid rgb(48, 47, 55);
+}
+
+.rl__effort__outline {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+
+.rl__effort__icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+  flex-shrink: 0;
+  fill: rgb(150, 155, 160);
+}
+
+.rl__effort__number {
+  font-style: normal;
+  line-height: normal;
+  font-weight: normal;
+  color: rgb(150, 155, 160);
+  font-size: 12px;
+}

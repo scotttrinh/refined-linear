@@ -1,10 +1,12 @@
-import { add, runSequence } from './features';
-import showFullTitle from './features/show-full-title';
-import showBoardEstimation from './features/show-board-estimation';
+import elementReady from "element-ready";
 
-const allFeatureTasks = [
-  showBoardEstimation,
-  showFullTitle
-].map(add);
+import { add, runSequence } from "./features";
+import showBoardEstimation from "./features/show-board-estimation";
+import showFullTitle from "./features/show-full-title";
 
-runSequence(allFeatureTasks).then(() => console.log('finished'));
+const allFeatureTasks = [showFullTitle, showBoardEstimation].map(add);
+
+elementReady("body.loaded", { stopOnDomReady: false }).then(() => {
+  runSequence(allFeatureTasks).then(() => console.log("finished"));
+  document.documentElement.classList.add("refined-linear");
+});

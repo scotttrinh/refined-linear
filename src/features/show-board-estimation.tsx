@@ -1,42 +1,18 @@
 import React from "dom-chef";
-import { css } from "emotion";
 import { constant, constTrue, constFalse } from "fp-ts/lib/function";
 import * as Option from "fp-ts/lib/Option";
 import { pipe } from "fp-ts/lib/pipeable";
+
+import * as when from "../when";
 import { FeatureDetails } from "../features";
+import * as selectors from "../selectors";
+import './show-board-estimation.css';
 
 const Effort = () => (
-  <div
-    className={css`
-      display: flex;
-      flex-grow: initial;
-      flex-basis: initial;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      height: 22px;
-      padding: 4px;
-      border-radius: 4px;
-      border: 1px solid rgb(48, 47, 55);
-    `}
-  >
-    <div
-      className={css`
-        display: flex;
-        align-items: center;
-        flex-shrink: 0;
-        margin-right: 8px;
-      `}
-    >
+  <div className='rl__effort__container'>
+    <div className='rl__effort__outline'>
       <svg
-        className={css`
-          width: 14px;
-          height: 14px;
-          margin-right: 6px;
-          flex-shrink: 0;
-          fill: rgb(150, 155, 160);
-        `}
+        className='rl__effort__icon'
         width="14"
         height="14"
         viewBox="0 0 14 14"
@@ -52,15 +28,7 @@ const Effort = () => (
           fill="#BEC2C8"
         ></path>
       </svg>
-      <span
-        className={css`
-          font-style: normal;
-          line-height: normal;
-          font-weight: normal;
-          color: rgb(150, 155, 160);
-          font-size: 12px;
-        `}
-      >
+      <span className='rl__effort__number'>
         2
       </span>
     </div>
@@ -73,24 +41,30 @@ const attachEffort = (issueEls: Element[]) => {
       Option.fromNullable(issueEl.childNodes[1]),
       Option.chain(children => Option.fromNullable(children.childNodes[1])),
       Option.chain(children => Option.fromNullable(children.childNodes[0])),
-      Option.map(el => el.after((Effort() as unknown) as Element))
+      Option.map(el => {
+        const effort = Effort();
+        el.after((effort as unknown) as Element)
+      })
     );
   });
 };
 
-const init = async () => {
+const doShowBoardEstimation = async () => {
+  console.log("doShowBoardEstimation");
   const issueEls = Array.from(
-    document.querySelectorAll('a[data-react-beautiful-dnd-draggable="0"]')
+    document.querySelectorAll(selectors.CARD)
   );
   attachEffort(issueEls);
 };
-const deinit = constant(Promise.resolve());
+const undo = constant(Promise.resolve());
 const include = [constTrue];
 const exclude = [constFalse];
 
 const showBoardEstimation: FeatureDetails = {
-  init,
-  deinit,
+  id: 'show-board-estimation',
+  when: when.locationChanges,
+  do: doShowBoardEstimation,
+  undo,
   include,
   exclude
 };
