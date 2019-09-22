@@ -48,6 +48,9 @@
     "element-ready": "^4.1.1",
     "emotion": "^10.0.17",
     "fp-ts": "^2.0.5",
-    "lodash": "^4.17.15"
+    "graphql-request": "^1.8.2",
+    "io-ts": "^2.0.1",
+    "lodash": "^4.17.15",
+    "type-fest": "^0.8.0"
   }
 }
