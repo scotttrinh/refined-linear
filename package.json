@@ -50,7 +50,9 @@
     "fp-ts": "^2.0.5",
     "graphql-request": "^1.8.2",
     "io-ts": "^2.0.1",
+    "io-ts-types": "^0.5.1",
     "lodash": "^4.17.15",
-    "type-fest": "^0.8.0"
+    "type-fest": "^0.8.0",
+    "webext-options-sync": "^1.0.0"
   }
 }
