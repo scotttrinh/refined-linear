@@ -1,5 +1,5 @@
 import { Lazy } from "fp-ts/lib/function";
-import elementReady from 'element-ready';
+import elementReady from "element-ready";
 
 import * as selectors from "./selectors";
 
@@ -47,5 +47,5 @@ export const locationChanges = (callback: CallbackFunction): void => {
     });
 
     observer.observe(rightPane, { childList: true, subtree: true });
-  })
+  });
 };

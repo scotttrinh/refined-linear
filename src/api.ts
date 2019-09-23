@@ -1,4 +1,4 @@
-import { GraphQLClient } from 'graphql-request';
+import { GraphQLClient } from "graphql-request";
 import { JsonObject } from "type-fest";
 interface GraphQLResponse {
   data: JsonObject;
@@ -14,8 +14,8 @@ class RefinedLinearError extends Error {
 const LINEAR_URL = "https://api.linear.app/graphql";
 
 export async function query(q: string): Promise<any> {
-  const token = await storage.get('token');
-  const teamId = await storage.get('teamId');
+  const token = await storage.get("token");
+  const teamId = await storage.get("teamId");
 
   const client = new GraphQLClient(LINEAR_URL, {
     headers: {

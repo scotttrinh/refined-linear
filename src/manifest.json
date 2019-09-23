@@ -5,7 +5,11 @@
   "homepage_url": "https://github.com/scotttrinh/refined-linear",
   "manifest_version": 2,
   "minimum_chrome_version": "68",
-  "permissions": ["https://linear.app/*", "https://api.linear.app/graphql"],
+  "permissions": [
+    "storage",
+    "https://linear.app/*",
+    "https://api.linear.app/graphql"
+  ],
   "content_scripts": [
     {
       "run_at": "document_start",
