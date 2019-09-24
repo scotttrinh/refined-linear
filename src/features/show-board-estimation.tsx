@@ -1,9 +1,9 @@
 import * as t from "io-ts";
 import React from "dom-chef";
-import { constant, constTrue, constFalse } from "fp-ts/lib/function";
-import { Either, map as mapEither } from "fp-ts/lib/Either";
-import * as Option from "fp-ts/lib/Option";
-import * as Arr from "fp-ts/lib/Array";
+import { constant, constFalse } from "fp-ts/lib/function";
+import * as E from "fp-ts/lib/Either";
+import * as O from "fp-ts/lib/Option";
+import * as A from "fp-ts/lib/Array";
 import { pipe } from "fp-ts/lib/pipeable";
 
 import * as when from "../when";
@@ -11,12 +11,18 @@ import { FeatureDetails } from "../features";
 import * as selectors from "../selectors";
 import { query } from "../api";
 import "./show-board-estimation.css";
+import { isBoard } from "../page-detect";
 
 const nullableNumberToEstimate = new t.Type(
-  'nullableNumberToEstimate',
-  (input: unknown): input is number => typeof input === 'number',
-  (input, context) => typeof input === 'number' ? t.success(input) : input === null ? t.success(0) : t.failure(input, context),
-  (input: number) => input === 0 ? null : input
+  "nullableNumberToEstimate",
+  (input: unknown): input is number => typeof input === "number",
+  (input, context) =>
+    typeof input === "number"
+      ? t.success(input)
+      : input === null
+      ? t.success(0)
+      : t.failure(input, context),
+  (input: number) => (input === 0 ? null : input)
 );
 
 const issueEstimate = t.type({
@@ -54,7 +60,7 @@ const Effort = (props: EffortProps) =>
     </div>
   ) as unknown) as HTMLDivElement;
 
-const getEstimates = async (): Promise<Either<t.Errors, IssueEstimate[]>> => {
+const getEstimates = async (): Promise<E.Either<t.Errors, IssueEstimate[]>> => {
   try {
     const response = await query(`
 issues {
@@ -64,34 +70,33 @@ issues {
 }
     `);
 
-    return t.array(issueEstimate).decode(response.team.issues)
+    return t.array(issueEstimate).decode(response.team.issues);
   } catch (e) {
-    console.log(e)
+    console.log(e);
     throw e;
   }
 };
 
-const attachEffort = (maybeEstimates: Either<t.Errors, IssueEstimate[]>) => (
+const attachEffort = (maybeEstimates: E.Either<t.Errors, IssueEstimate[]>) => (
   issueEl: Element
 ) => {
-  console.log(maybeEstimates)
   pipe(
     maybeEstimates,
-    mapEither(estimates => {
+    E.map(estimates => {
       pipe(
-        Option.fromNullable(issueEl.childNodes[1]),
-        Option.chain(children => Option.fromNullable(children.childNodes[1])),
-        Option.chain(children => Option.fromNullable(children.childNodes[0])),
-        Option.map(el => {
+        O.fromNullable(issueEl.childNodes[1]),
+        O.chain(children => O.fromNullable(children.childNodes[1])),
+        O.chain(children => O.fromNullable(children.childNodes[0])),
+        O.map(el => {
           pipe(
-            Option.fromNullable(issueEl.getAttribute("href")),
-            Option.chain(href => Option.fromNullable(href.match(/\d+$/))),
-            Option.chain(Arr.head),
-            Option.map(Number),
-            Option.chain(issueNumber =>
-              Option.fromNullable(estimates.find(e => e.number === issueNumber))
+            O.fromNullable(issueEl.getAttribute("href")),
+            O.chain(href => O.fromNullable(href.match(/\d+$/))),
+            O.chain(A.head),
+            O.map(Number),
+            O.chain(issueNumber =>
+              O.fromNullable(estimates.find(e => e.number === issueNumber))
             ),
-            Option.map(({ estimate }) => {
+            O.map(({ estimate }) => {
               const effort = Effort({ estimate });
               el.after(effort);
             })
@@ -104,15 +109,14 @@ const attachEffort = (maybeEstimates: Either<t.Errors, IssueEstimate[]>) => (
 
 const doShowBoardEstimation = async () => {
   const issueEls = Array.from(document.querySelectorAll(selectors.CARD));
-  console.log('doShowBoardEstimation', issueEls)
   const estimates = await getEstimates();
   pipe(
     issueEls,
-    Arr.map(attachEffort(estimates))
+    A.map(attachEffort(estimates))
   );
 };
 const undo = constant(Promise.resolve());
-const include = [constTrue];
+const include = [isBoard];
 const exclude = [constFalse];
 
 const showBoardEstimation: FeatureDetails = {
