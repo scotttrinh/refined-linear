@@ -15,7 +15,7 @@ const LINEAR_URL = "https://api.linear.app/graphql";
 export async function query(q: string): Promise<any> {
   const options = await getAll();
 
-  pipe(
+  return pipe(
     options,
     R.sequence(O.option),
     O.fold(
@@ -27,13 +27,11 @@ export async function query(q: string): Promise<any> {
           }
         });
         try {
-          const response = await client.request(`{ team(id: "${teamId}") { ${q} } }`);
-          return response;
+          return client.request(`{ team(id: "${teamId}") { ${q} } }`);
         } catch (e) {
           throw new RefinedLinearError(e.message);
         }
       }
     )
   );
-
 }

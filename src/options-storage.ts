@@ -1,5 +1,4 @@
 import OptionsSync from "webext-options-sync";
-import { tryCatch } from "fp-ts/lib/TaskEither";
 import * as Either from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/pipeable";
 import * as t from "io-ts";
@@ -13,12 +12,7 @@ export const rlOptions = t.type({
 
 export type RLOptions = t.TypeOf<typeof rlOptions>;
 
-interface RawRLOptions {
-  token: string;
-  teamId: string;
-}
-
-const storage = new OptionsSync({
+export const storage = new OptionsSync({
   storageName: "options",
   defaults: {
     token: "",
@@ -27,18 +21,11 @@ const storage = new OptionsSync({
   logging: false
 });
 
-/**
- * Used for the webext-options-sync code. In most places, you probably want the
- * `getAll` function, which makes you deal with the empty-string initial case, and
- * ensures the structure of the data returned.
- */
-export async function getRaw(): Promise<RawRLOptions> {
-  return storage.getAll();
-}
+export async function getAll(): Promise<RLOptions> {
+  const options = await storage.getAll();
 
-export function getAll(): Promise<RLOptions> {
   return pipe(
-    tryCatch(getRaw, u => new Error(String(u))),
+    options,
     rlOptions.decode,
     Either.fold((err) => Promise.reject(err), (opts) => Promise.resolve(opts))
   );

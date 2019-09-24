@@ -55,7 +55,8 @@ module.exports = (
     builtAt: true
   },
   entry: {
-    content: "./src/content"
+    content: "./src/content",
+    options: "./src/options"
   },
   output: {
     path: path.join(__dirname, "dist"),

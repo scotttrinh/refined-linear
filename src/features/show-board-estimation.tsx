@@ -64,9 +64,7 @@ issues {
 }
     `);
 
-    const decoded = t.array(issueEstimate).decode(response.team.issues)
-    console.log(decoded);
-    return decoded;
+    return t.array(issueEstimate).decode(response.team.issues)
   } catch (e) {
     console.log(e)
     throw e;
