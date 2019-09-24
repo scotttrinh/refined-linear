@@ -19,8 +19,12 @@ export async function query(q: string): Promise<any> {
     options,
     R.sequence(O.option),
     O.fold(
-      () => { throw new RefinedLinearError('token and team ID not set!') },
-      async ({token, teamId}) => {
+      () => {
+        throw new RefinedLinearError(
+          "Token and Team ID not set! Go to the Refined Linear preference page and set them."
+        );
+      },
+      async ({ token, teamId }) => {
         const client = new GraphQLClient(LINEAR_URL, {
           headers: {
             Authorization: token
