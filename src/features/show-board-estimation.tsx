@@ -1,4 +1,3 @@
-import * as t from "io-ts";
 import React from "dom-chef";
 import { constant, constFalse } from "fp-ts/lib/function";
 import * as E from "fp-ts/lib/Either";
@@ -6,36 +5,23 @@ import * as O from "fp-ts/lib/Option";
 import * as A from "fp-ts/lib/Array";
 import * as R from "fp-ts/lib/Record";
 import { pipe } from "fp-ts/lib/pipeable";
+import { getLastSemigroup } from "fp-ts/lib/Semigroup";
 
 import * as when from "../when";
 import { FeatureDetails } from "../features";
 import * as selectors from "../selectors";
-import { query } from "../api";
 import "./show-board-estimation.css";
 import { isBoard } from "../page-detect";
-import { getLastSemigroup } from "fp-ts/lib/Semigroup";
+import {
+  IssueEstimate,
+  getAll as getAllEstimates
+} from "../queries/issue-estimate";
+import * as getIssueNumber from "../utils/get-issue-number";
 
-const nullableNumberToEstimate = new t.Type(
-  "nullableNumberToEstimate",
-  (input: unknown): input is number => typeof input === "number",
-  (input, context) =>
-    typeof input === "number"
-      ? t.success(input)
-      : input === null
-      ? t.success(0)
-      : t.failure(input, context),
-  (input: number) => (input === 0 ? null : input)
+const groupIssueEstimatesBy = R.fromFoldableMap(
+  getLastSemigroup<IssueEstimate>(),
+  A.array
 );
-
-const groupIssueEstimatesBy = R.fromFoldableMap(getLastSemigroup<IssueEstimate>(), A.array);
-
-const issueEstimate = t.type({
-  id: t.string,
-  number: t.number,
-  estimate: nullableNumberToEstimate
-});
-
-type IssueEstimate = t.TypeOf<typeof issueEstimate>;
 
 interface EffortProps {
   estimate: number;
@@ -43,7 +29,7 @@ interface EffortProps {
 
 const Effort = (props: EffortProps) =>
   ((
-    <div className='rl__effort__container'>
+    <div className="rl__effort__container">
       <svg
         className="rl__effort__icon"
         width="14"
@@ -62,32 +48,6 @@ const Effort = (props: EffortProps) =>
     </div>
   ) as unknown) as HTMLDivElement;
 
-const getEstimates = async (): Promise<E.Either<t.Errors, IssueEstimate[]>> => {
-  try {
-    const response = await query(`
-issues {
-  id,
-  number,
-  estimate
-}
-    `);
-
-    return t.array(issueEstimate).decode(response.issues);
-  } catch (e) {
-    console.log(e);
-    throw e;
-  }
-};
-
-function getIssueNumberFromCard(cardEl: Element): O.Option<Number> {
-  return pipe(
-    O.fromNullable(cardEl.getAttribute("href")),
-    O.chain(href => O.fromNullable(href.match(/\d+$/))),
-    O.chain(A.head),
-    O.map(Number)
-  );
-}
-
 const attachEffort = (estimatesByNumber: Record<string, IssueEstimate>) => (
   issueEl: Element
 ) => {
@@ -99,7 +59,7 @@ const attachEffort = (estimatesByNumber: Record<string, IssueEstimate>) => (
     ),
     O.map(overflowEl => {
       pipe(
-        getIssueNumberFromCard(issueEl),
+        getIssueNumber.fromCard(issueEl),
         O.chain(issueNumber =>
           R.lookup(String(issueNumber), estimatesByNumber)
         ),
@@ -114,12 +74,15 @@ const attachEffort = (estimatesByNumber: Record<string, IssueEstimate>) => (
 
 const doShowBoardEstimation = async () => {
   const issueEls = Array.from(document.querySelectorAll(selectors.CARD));
-  const maybeEstimates = await getEstimates();
+  const maybeEstimates = await getAllEstimates();
 
   pipe(
     maybeEstimates,
     E.map(estimates => {
-      const estimatesByNumber = groupIssueEstimatesBy(estimates, e => [String(e.number), e]);
+      const estimatesByNumber = groupIssueEstimatesBy(estimates, e => [
+        String(e.number),
+        e
+      ]);
       pipe(
         issueEls,
         A.map(attachEffort(estimatesByNumber))

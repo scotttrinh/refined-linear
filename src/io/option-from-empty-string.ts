@@ -1,12 +1,9 @@
 import { either } from "fp-ts/lib/Either";
-import { getOrElse, none, Option, some } from "fp-ts/lib/Option";
+import { getOrElse, none, some } from "fp-ts/lib/Option";
 import * as t from "io-ts";
 import { option } from "io-ts-types/lib/option";
 
-export interface OptionFromEmptyStringC
-  extends t.Type<Option<string>, string, unknown> {}
-
-export const optionFromEmptyString: OptionFromEmptyStringC = new t.Type(
+export const optionFromEmptyString = new t.Type(
   "OptionFromEmptyString",
   option(t.string).is,
   (u, c) =>
