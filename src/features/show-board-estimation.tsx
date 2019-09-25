@@ -27,6 +27,8 @@ const nullableNumberToEstimate = new t.Type(
   (input: number) => (input === 0 ? null : input)
 );
 
+const groupIssueEstimatesBy = R.fromFoldableMap(getLastSemigroup<IssueEstimate>(), A.array);
+
 const issueEstimate = t.type({
   id: t.string,
   number: t.number,
@@ -38,8 +40,6 @@ type IssueEstimate = t.TypeOf<typeof issueEstimate>;
 interface EffortProps {
   estimate: number;
 }
-
-const groupIssueEstimatesBy = R.fromFoldableMap(getLastSemigroup<IssueEstimate>(), A.array);
 
 const Effort = (props: EffortProps) =>
   ((
@@ -72,7 +72,7 @@ issues {
 }
     `);
 
-    return t.array(issueEstimate).decode(response.team.issues);
+    return t.array(issueEstimate).decode(response.issues);
   } catch (e) {
     console.log(e);
     throw e;
@@ -115,6 +115,7 @@ const attachEffort = (estimatesByNumber: Record<string, IssueEstimate>) => (
 const doShowBoardEstimation = async () => {
   const issueEls = Array.from(document.querySelectorAll(selectors.CARD));
   const maybeEstimates = await getEstimates();
+
   pipe(
     maybeEstimates,
     E.map(estimates => {

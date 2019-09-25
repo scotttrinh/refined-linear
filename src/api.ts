@@ -31,7 +31,7 @@ export async function query(q: string): Promise<any> {
           }
         });
         try {
-          return client.request(`{ team(id: "${teamId}") { ${q} } }`);
+          return (await client.request(`{ team(id: "${teamId}") { ${q} } }`)).team;
         } catch (e) {
           throw new RefinedLinearError(e.message);
         }
