@@ -1,5 +1,5 @@
 import React from "dom-chef";
-import { constant, constFalse } from "fp-ts/lib/function";
+import { constant, constFalse, Lazy } from "fp-ts/lib/function";
 import * as E from "fp-ts/lib/Either";
 import * as O from "fp-ts/lib/Option";
 import * as A from "fp-ts/lib/Array";
@@ -93,10 +93,14 @@ const doShowBoardEstimation = async () => {
 const undo = constant(Promise.resolve());
 const include = [isBoard];
 const exclude = [constFalse];
+const doWhen = (callback: Lazy<Promise<void>>): void => {
+  when.boardUpdates(callback);
+  when.locationChanges(callback);
+};
 
 const showBoardEstimation: FeatureDetails = {
   id: "show-board-estimation",
-  when: when.locationChanges,
+  when: doWhen,
   do: doShowBoardEstimation,
   undo,
   include,
