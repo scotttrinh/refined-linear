@@ -52,20 +52,35 @@ const attachEffort = (estimatesByNumber: Record<string, IssueEstimate>) => (
   issueEl: Element
 ) => {
   pipe(
-    O.fromNullable(
-      issueEl.querySelector(
-        "div:nth-child(2) > div:nth-child(2) > div:nth-child(1)"
-      )
+    issueEl.querySelector(
+      "div:nth-child(2) > div:nth-child(2) > div:nth-child(1)"
     ),
-    O.map(overflowEl => {
+    O.fromNullable,
+    O.map(firstEl => {
       pipe(
-        getIssueNumber.fromCard(issueEl),
+        issueEl,
+        getIssueNumber.fromCard,
         O.chain(issueNumber =>
           R.lookup(String(issueNumber), estimatesByNumber)
         ),
         O.map(({ estimate }) => {
-          const effort = Effort({ estimate });
-          overflowEl.replaceWith(effort);
+          pipe(
+            firstEl.querySelector("rl__effort__number"),
+            O.fromNullable,
+            O.fold(
+              // No existing effort element
+              () => O.some(estimate),
+              effortNumberEl =>
+                // Estimate has changed
+                effortNumberEl.textContent !== String(estimate)
+                  ? O.some(estimate)
+                  : O.none
+            ),
+            O.map(estimate => {
+              const effort = Effort({ estimate });
+              firstEl.replaceWith(effort);
+            })
+          );
         })
       );
     })
