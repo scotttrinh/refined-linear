@@ -49,3 +49,39 @@ export const locationChanges = (callback: CallbackFunction): void => {
     observer.observe(rightPane, { childList: true, subtree: true });
   });
 };
+
+function nodeIsElement(candidate: Node): candidate is Element {
+  return candidate.nodeType === 1;
+}
+
+function didAddCard(mutations: MutationRecord[]): boolean {
+  return mutations.some(
+    mutation => {
+      for (const [, added] of mutation.addedNodes.entries()) {
+        if (nodeIsElement(added) && added.matches(selectors.CARD)) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+  );
+}
+
+export const boardUpdates = (callback: CallbackFunction): void => {
+  callback();
+  elementReady(selectors.RIGHT_PANE).then((rightPane?: Element) => {
+    if (!rightPane) {
+      return;
+    }
+
+    const observer = new MutationObserver((mutations) => {
+      console.log(mutations);
+      if (didAddCard(mutations)) {
+        callback();
+      }
+    });
+
+    observer.observe(rightPane, { childList: true, subtree: true });
+  });
+}
