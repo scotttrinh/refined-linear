@@ -1,15 +1,15 @@
 import * as O from "fp-ts/lib/Option";
 
-export function select(
-  selector: string,
+export function select<K extends keyof HTMLElementTagNameMap>(
+  selector: K,
   baseElement: Element | Document = document
-): O.Option<Element> {
+): O.Option<HTMLElementTagNameMap[K]> {
   return O.fromNullable(baseElement.querySelector(selector));
 }
 
-export function selectAll(
-  selector: string,
+export function selectAll<K extends keyof HTMLElementTagNameMap>(
+  selector: K,
   baseElement: Element | Document = document
-): Element[] {
+): HTMLElementTagNameMap[K][] {
   return Array.from(baseElement.querySelectorAll(selector));
 }
