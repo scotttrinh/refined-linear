@@ -5,7 +5,7 @@ import * as t from "io-ts";
 
 import { optionFromEmptyString } from "./io/option-from-empty-string";
 
-export const rlOptions = t.type({
+const rlOptions = t.type({
   token: optionFromEmptyString,
   teamId: optionFromEmptyString
 });
