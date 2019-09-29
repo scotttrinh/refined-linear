@@ -10,6 +10,16 @@ test("optionFromEmptyString#decode", t => {
     optionFromEmptyString.decode("Not empty"),
     E.right(O.some("Not empty"))
   );
+  t.deepEqual(
+    optionFromEmptyString.decode(12),
+    E.left([
+      {
+        value: 12,
+        message: undefined,
+        context: [{ actual: 12, key: "", type: optionFromEmptyString }]
+      }
+    ])
+  );
 });
 
 test("optionFromEmptyString#encode", t => {
