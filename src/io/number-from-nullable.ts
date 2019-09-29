@@ -2,7 +2,7 @@ import * as t from "io-ts";
 
 export function numberFromNullable(whenNull: number) {
   return new t.Type(
-    "nullableNumberToEstimate",
+    "numberFromNullable",
     t.number.is,
     (input, context) =>
       t.number.is(input)
