@@ -51,6 +51,7 @@
     "io-ts": "^2.0.1",
     "io-ts-types": "^0.5.1",
     "monocle-ts": "^2.0.0",
+    "select-dom": "^5.1.0",
     "webext-options-sync": "^1.0.0"
   },
   "ava": {
