@@ -6,11 +6,10 @@ import { storage } from "./options-storage";
 
 function init(): void {
   pipe(
-    select('form'),
-    O.fold(
-      () => { throw new Error("Could not find options form!") },
-      storage.syncForm
-    )
+    select("form"),
+    O.fold(() => {
+      throw new Error("Could not find options form!");
+    }, storage.syncForm)
   );
 }
 
